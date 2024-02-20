@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sunburst Chart</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+<body>
+
+<div id="myDiv">
+    <!-- Plotly chart will be drawn inside this DIV -->
+    <script>
+        // Load the CSV file
+        d3.csv('average_nutrients.csv').then(function(data) {
+            var categories = data.map(function(d) { return d.Category; });
+            var sugarContent = data.map(function(d) { return +d['Sugar_Tot_(g)']; });
+            var proteinContent = data.map(function(d) { return +d['Protein_(g)']; });
+            var fatContent = data.map(function(d) { return +d['Lipid_Tot_(g)']; });
+            var carbContent = data.map(function(d) { return +d['Carbohydrt_(g)']; });
+            var energyContent = data.map(function(d) { return +d['Energ_Kcal']; });
+    
+            var trace1 = {
+                x: categories,
+                y: sugarContent,
+                type: 'bar',
+                name: 'Sugar (g)',
+                marker: {
+                    color: 'rgba(255,99,132,0.6)',
+                    line: {
+                        color: 'rgba(255,99,132,1.0)',
+                        width: 1
+                    }
+                }
+            };
+    
+            var trace2 = {
+                x: categories,
+                y: proteinContent,
+                type: 'bar',
+                name: 'Protein (g)',
+                marker: {
+                    color: 'rgba(54, 162, 235, 0.6)',
+                    line: {
+                        color: 'rgba(54, 162, 235, 1.0)',
+                        width: 1
+                    }
+                }
+            };
+    
+            var trace3 = {
+                x: categories,
+                y: fatContent,
+                type: 'bar',
+                name: 'Fat (g)',
+                marker: {
+                    color: 'rgba(255, 206, 86, 0.6)',
+                    line: {
+                        color: 'rgba(255, 206, 86, 1.0)',
+                        width: 1
+                    }
+                }
+            };
+    
+            var trace4 = {
+                x: categories,
+                y: carbContent,
+                type: 'bar',
+                name: 'Carbohydrates (g)',
+                marker: {
+                    color: 'rgba(75, 192, 192, 0.6)',
+                    line: {
+                        color: 'rgba(75, 192, 192, 1.0)',
+                        width: 1
+                    }
+                }
+            };
+    
+            var trace5 = {
+                x: categories,
+                y: energyContent,
+                type: 'bar',
+                name: 'Energy (Kcal)',
+                marker: {
+                    color: 'rgba(153, 102, 255, 0.6)',
+                    line: {
+                        color: 'rgba(153, 102, 255, 1.0)',
+                        width: 1
+                    }
+                }
+            };
+    
+            var data = [trace1, trace2, trace3, trace4, trace5];
+    
+            var layout = {
+                title: 'Nutrient Content by Food Category',
+                xaxis: {
+                    title: 'Food Category',
+                    tickangle: -45
+                },
+                yaxis: {
+                    title: 'Amount',
+                    zeroline: false
+                },
+                barmode: 'group',
+                margin: {
+                    l: 100,
+                    r: 100,
+                    t: 100,
+                    b: 150
+                },
+                paper_bgcolor: 'rgb(248,248,255)',
+                plot_bgcolor: 'rgb(248,248,255)'
+            };
+    
+            Plotly.newPlot('myDiv', data, layout);
+        });
+    </script>
+    
+</div>
+
+<div id="nutritionGraph">
+    <!-- Dynamic content will be loaded here -->
+    <script>
+        d3.csv('top_10_protein.csv').then(function(data) {
+            // Prepare traces for the scatter plot
+            var traces = [];
+            var categories = {};
+    
+            // Group data by category
+            data.forEach(function(item) {
+                var category = item.Category;
+                if (!categories[category]) {
+                    categories[category] = {x: [], y: [], text: [], name: category, mode: 'markers', type: 'scatter'};
+                }
+                categories[category].x.push(item['Protein_(g)']);
+                categories[category].y.push(item['Sugar_Tot_(g)']);
+                categories[category].text.push(item.Shrt_Desc);
+            });
+    
+            // Convert grouped data into array of traces
+            for (var category in categories) {
+                traces.push(categories[category]);
+            }
+    
+            // Define the layout
+            var layout = {
+                title: 'Food Items by Protein and Sugar Content',
+                xaxis: {
+                    title: 'Protein Content (g)'
+                },
+                yaxis: {
+                    title: 'Sugar Content (g)'
+                },
+                hovermode: 'closest'
+            };
+    
+            // Plot the graph
+            Plotly.newPlot('nutritionGraph', traces, layout);
+        });
+   
+    
+</script>
+
+</div>
+
+<!-- We will now make a carousel item -->
+<div id="bubbleprot">
+    <script>
+        d3.csv('top_10_protein.csv').then(function(data) {
+            var traces = [];
+            var categories = {};
+    
+            // Group data by category for the bubble chart
+            data.forEach(function(item) {
+                var category = item.Category;
+                if (!categories[category]) {
+                    categories[category] = {x: [], y: [], text: [], marker: {size: []}, mode: 'markers', type: 'scatter'};
+                }
+                categories[category].x.push(item['Protein_(g)']); // Protein content as x-axis
+                categories[category].y.push(item['Sugar_Tot_(g)']); // Sugar content as y-axis
+                categories[category].text.push(item.Shrt_Desc); // Description as hover text
+                categories[category].marker.size.push(item['Protein_(g)']); // Protein content determines bubble size
+            });
+    
+            for (var category in categories) {
+                traces.push(categories[category]);
+            }
+    
+            var layout = {
+                title: 'Food Items by Protein Content and Sugar Content',
+                xaxis: {title: 'Protein Content (g)'},
+                yaxis: {title: 'Sugar Content (g)'},
+                hovermode: 'closest',
+                showlegend: true
+            };
+    
+            Plotly.newPlot('bubbleprot', traces, layout);
+        });
+    </script>
+    
+
+</div>
+
+<div id="spiderprot">
+
+    <script>
+        d3.csv('top_10_protein.csv').then(function(data) {
+            // Assuming you want to compare the first two items for simplicity
+            // In practice, you might aggregate data or select specific items/categories
+            
+            // Prepare data for the first item
+            var trace1 = {
+                type: 'scatterpolar',
+                r: [data[0]['Protein_(g)'], data[0]['Sugar_Tot_(g)'], data[0]['Lipid_Tot_(g)']],
+                theta: ['Protein', 'Sugar', 'Fat'],
+                fill: 'toself',
+                name: data[0].Shrt_Desc
+            };
+    
+            // Prepare data for the second item
+            var trace2 = {
+                type: 'scatterpolar',
+                r: [data[1]['Protein_(g)'], data[1]['Sugar_Tot_(g)'], data[1]['Lipid_Tot_(g)']],
+                theta: ['Protein', 'Sugar', 'Fat'],
+                fill: 'toself',
+                name: data[1].Shrt_Desc
+            };
+    
+            var data = [trace1, trace2];
+    
+            var layout = {
+                title: 'Nutritional Comparison',
+                polar: {
+                    radialaxis: {
+                        visible: true,
+                        range: [0, Math.max(...data.map(item => Math.max(...item.r)))] // Dynamically adjust the range based on max value
+                    }
+                },
+                showlegend: true
+            };
+    
+            Plotly.newPlot('spiderprot', data, layout);
+        });
+    </script>
+
+
+</div>
+
+</body>
+</html>
