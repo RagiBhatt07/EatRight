@@ -63,8 +63,8 @@
 <script src="https://d3js.org/d3.v6.min.js"></script>
 <script>
     const width = 1200;
-    const height = 800;
-    const margin = {top: 20, right: 20, bottom: 30, left: 40};
+    const height = 1200;
+    const margin = {top: 60, right: 20, bottom: 200, left: 60};
 
     const svg = d3.select("#foodChart")
         .attr("width", width)
@@ -97,8 +97,8 @@
         });
 
         // Scale down the images to avoid overlap
-        const imageWidth = 50; // Width of the images in pixels
-        const imageHeight = 50; // Height of the images in pixels
+        const imageWidth = 80; // Width of the images in pixels
+        const imageHeight = 80; // Height of the images in pixels
 
         // Adjust the yScale to add some padding on top for better visibility
         const yScale = d3.scaleLinear()
@@ -111,6 +111,7 @@
             .range([margin.left, width - margin.right])
             .padding(0.1); // Add some padding between bands
 
+        
         // Append images for each data point
         svg.selectAll("image")
             .data(data)
@@ -170,6 +171,67 @@
                     .duration(500)
                     .style("opacity", 0);
             });
+
+            svg.append("g")
+                .attr("class", "grid")
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.axisBottom(xScale)
+                    .tickSize(-height)
+                    .tickFormat("")
+                );
+
+            svg.selectAll(".grid line")
+                .style("stroke", "lightgrey")
+                .style("stroke-opacity", "0.7")
+                .style("shape-rendering", "crispEdges");
+            
+
+
+                    // If using bars, you can add a color scale
+        const colorScale = d3.scaleOrdinal(d3.schemeCategory10); // or any other color scheme
+
+// Then apply this scale to your bars or category labels
+svg.selectAll(".bar")
+    .style("fill", (d, i) => colorScale(i));
+
+
+// Add title and axis labels
+svg.selectAll("text")
+    .style("font-family", "Arial, sans-serif")
+    .style("font-size", "12px");
+
+svg.append("text")
+    .attr("x", (width / 2))             
+    .attr("y", margin.top / 2)
+    .attr("text-anchor", "middle")  
+    .style("font-size", "24px")
+    .style("font-weight", "bold")
+    .style("font-family", "Arial, sans-serif")
+    .text("Food Nutrient Analysis");
+
+
+
+const legend = svg.append("g")
+    .attr("font-family", "Arial, sans-serif")
+    .attr("font-size", 10)
+    .attr("text-anchor", "end")
+    .selectAll("g")
+    .data(colorScale.domain().slice().reverse())
+    .enter().append("g")
+    .attr("transform", (d, i) => "translate(0," + i * 20 + ")");
+
+legend.append("rect")
+.attr("x", width - 19)
+.attr("width", 19)
+.attr("height", 19)
+.attr("fill", colorScale);
+
+legend.append("text")
+.attr("x", width - 24)
+.attr("y", 9.5)
+.attr("dy", "0.32em")
+.text(d => d);
+
 
         // Function to update visibility based on checkboxes
         function updateVisibility() {
