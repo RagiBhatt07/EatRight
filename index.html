@@ -29,8 +29,8 @@
     <div class="carousel">
         <!-- Carousel Item 1 -->
         <div class="carousel-item">
-            <h2>Title of the Webpage</h2>
-            <p>Description of what the website is about.</p>
+            <h2>Dietary Pattern in the US</h2>
+            <p></p>
             <p>Explanation of why the website exists.</p>
         </div>
         <!-- Carousel Item 2 -->
@@ -64,7 +64,7 @@
 <script>
     const width = 1200;
     const height = 1200;
-    const margin = {top: 60, right: 20, bottom: 200, left: 60};
+    const margin = {top: 60, right: 60, bottom: 200, left: 60};
 
     const svg = d3.select("#foodChart")
         .attr("width", width)
@@ -377,123 +377,108 @@ legend.append("text")
     
 </div>
 
-<div id="nutritionGraph">
-    <!-- Dynamic content will be loaded here -->
+
+<!-- Adding a line break -->
+<br>
+<div id="bubble-plot">
+
     <script>
-        d3.csv('./data/top_10_protein.csv').then(function(data) {
-            // Prepare traces for the scatter plot
-            var traces = [];
-            var categories = {};
+        Plotly.d3.csv('./data/top_10_protein.csv', function(err, rows){
+            // Ensure no errors occurred during loading the data
+            if(err) throw err;
     
             // Group data by category
-            data.forEach(function(item) {
-                var category = item.Category;
-                if (!categories[category]) {
-                    categories[category] = {x: [], y: [], text: [], name: category, mode: 'markers', type: 'scatter'};
+            let categoryData = {};
+            rows.forEach(row => {
+                if (!categoryData[row.Category]) {
+                    categoryData[row.Category] = [];
                 }
-                categories[category].x.push(item['Protein_(g)']);
-                categories[category].y.push(item['Sugar_Tot_(g)']);
-                categories[category].text.push(item.Shrt_Desc);
+                categoryData[row.Category].push(row);
             });
     
-            // Convert grouped data into array of traces
-            for (var category in categories) {
-                traces.push(categories[category]);
-            }
-    
-            // Define the layout
-            var layout = {
-                title: 'Food Items by Protein and Sugar Content',
-                xaxis: {
-                    title: 'Protein Content (g)'
-                },
-                yaxis: {
-                    title: 'Sugar Content (g)'
-                },
-                hovermode: 'closest'
-            };
-    
-            // Plot the graph
-            Plotly.newPlot('nutritionGraph', traces, layout);
-        });
-   
-    
-</script>
-
-</div>
-
-<!-- We will now make a carousel item -->
-<div id="bubbleprot">
-    <script>
-        d3.csv('./data/top_10_protein.csv').then(function(data) {
-            var traces = [];
-            var categories = {};
-    
-            // Group data by category for the bubble chart
-            data.forEach(function(item) {
-                var category = item.Category;
-                if (!categories[category]) {
-                    categories[category] = {x: [], y: [], text: [], marker: {size: []}, mode: 'markers', type: 'scatter'};
-                }
-                categories[category].x.push(item['Protein_(g)']); // Protein content as x-axis
-                categories[category].y.push(item['Sugar_Tot_(g)']); // Sugar content as y-axis
-                categories[category].text.push(item.Shrt_Desc); // Description as hover text
-                categories[category].marker.size.push(item['Protein_(g)']); // Protein content determines bubble size
+            // Generate a trace for each category
+            let traces = Object.keys(categoryData).map(category => {
+                let items = categoryData[category];
+                return {
+                    name: category,
+                    x: items.map(item => parseFloat(item['Carbohydrt_(g)'])), // Carbohydrate content
+                    y: items.map(item => parseFloat(item['Protein_(g)'])), // Protein content
+                    text: items.map(item => item['Shrt_Desc']), // Text displayed when hovering over a bubble
+                    mode: 'markers',
+                    marker: {
+                        size: items.map(item => parseFloat(item['Protein_(g)'])), // Size of the bubbles
+                        sizemode: 'diameter', // 'area' or 'diameter'
+                        sizeref: 2.0 * Math.max(...items.map(item => parseFloat(item['Protein_(g)']))) / (10**2), // Adjust '30' to scale bubble sizes
+                        opacity: 0.6
+                    }
+                };
             });
     
-            for (var category in categories) {
-                traces.push(categories[category]);
-            }
-    
-            var layout = {
-                title: 'Food Items by Protein Content and Sugar Content',
-                xaxis: {title: 'Protein Content (g)'},
-                yaxis: {title: 'Sugar Content (g)'},
+            let layout = {
+                title: 'Protein to Carbohydrate Content in Food Items',
+                xaxis: {title: 'Carbohydrates (g)'},
+                yaxis: {title: 'Protein (g)'},
+                margin: {t: 40},
                 hovermode: 'closest',
                 showlegend: true
             };
     
-            Plotly.newPlot('bubbleprot', traces, layout);
+            Plotly.newPlot('bubble-plot', traces, layout);
         });
     </script>
-    
-
 </div>
 
-<div id="bubblefat">
+
+<!-- Adding Protin to Fat -->
+
+<div id="bubble-fat">
+
     <script>
-        d3.csv('./data/top_10_fat.csv').then(function(data) {
-            var traces = [];
-            var categories = {};
+        Plotly.d3.csv('./data/top_10_protein.csv', function(err, rows){
+            // Ensure no errors occurred during loading the data
+            if(err) throw err;
     
-            // Group data by category for the bubble chart
-            data.forEach(function(item) {
-                var category = item.Category;
-                if (!categories[category]) {
-                    categories[category] = {x: [], y: [], text: [], marker: {size: []}, mode: 'markers', type: 'scatter'};
+            // Group data by category
+            let categoryData = {};
+            rows.forEach(row => {
+                if (!categoryData[row.Category]) {
+                    categoryData[row.Category] = [];
                 }
-                categories[category].x.push(item['Lipid_Tot_(g)']); // Fat content as x-axis
-                categories[category].y.push(item['Sugar_Tot_(g)']); // Sugar content as y-axis
-                categories[category].text.push(item.Shrt_Desc); // Description as hover text
-                categories[category].marker.size.push(item['Lipid_Tot_(g)']); // Fat content determines bubble size
+                categoryData[row.Category].push(row);
             });
     
-            for (var category in categories) {
-                traces.push(categories[category]);
-            }
+            // Generate a trace for each category
+            let traces = Object.keys(categoryData).map(category => {
+                let items = categoryData[category];
+                return {
+                    name: category,
+                    x: items.map(item => parseFloat(item['Lipid_Tot_(g)'])), // Fat content
+                    y: items.map(item => parseFloat(item['Protein_(g)'])), // Protein content
+                    text: items.map(item => item['Shrt_Desc']), // Text displayed when hovering over a bubble
+                    mode: 'markers',
+                    marker: {
+                        size: items.map(item => parseFloat(item['Protein_(g)'])), // Size of the bubbles
+                        sizemode: 'diameter', // 'area' or 'diameter'
+                        sizeref: 2.0 * Math.max(...items.map(item => parseFloat(item['Protein_(g)']))) / (10**2), // Adjust '30' to scale bubble sizes
+                        opacity: 0.6
+                    }
+                };
+            });
     
-            var layout = {
-                title: 'Food Items by Fat Content and Sugar Content',
-                xaxis: {title: 'Fat Content (g)'},
-                yaxis: {title: 'Sugar Content (g)'},
+            let layout = {
+                title: 'Protein to Fat Content in Food Items',
+                xaxis: {title: 'Fat (g)'},
+                yaxis: {title: 'Protein (g)'},
+                margin: {t: 40},
                 hovermode: 'closest',
                 showlegend: true
             };
     
-            Plotly.newPlot('bubblefat', traces, layout);
+            Plotly.newPlot('bubble-fat', traces, layout);
         });
     </script>
 </div>
+<!-- Adding a line break -->
 
 <div id="collate">
     <script>
