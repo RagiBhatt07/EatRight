@@ -1,0 +1,7 @@
+Age Group,Category,Type,DailyBeverage
+Adolescent (12-17),Income,"Income : Less than $15,000",0.9
+Adolescent (12-17),Income,"Income : $15,000 - 24,999",0.8
+Adolescent (12-17),Income,"Income : $25,000 - 34,999",0.9
+Adolescent (12-17),Income,"Income : $35,000 - 49,999",0.9
+Adolescent (12-17),Income,"Income : $50,000 - 74,999",0.7
+Adolescent (12-17),Income,"Income : $75,000 or greater",0.5
