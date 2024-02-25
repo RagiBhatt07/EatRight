@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dietary Patterns in the US</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <style>
+        
+    body {
+        background-color: white; /* Sets the background color for the whole page */
+        font-family: 'Arial', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Set a default font for consistency */
+    }
+
+    .carousel {
+        position: relative;
+        width: 100%;
+        height: 100vh; /* Full height of the viewport */
+        overflow: hidden;
+        background-color: #ffce1f; /* The yellow background */
+    }
+
+    .carousel-item {
+        display: none; /* Initially hide all items, show using JavaScript */
+        text-align: left; /* Align text to the left */
+        color: black; /* Text color */
+        height: 100vh; /* Make each item fill the viewport height */
+        box-sizing: border-box; /* Include padding in the height calculation */
+        display: flex; /* Enable flexbox layout */
+        align-items: center; /* Center items vertically */
+        justify-content: center; /* Center items horizontally */
+        padding: 0 5%; /* Add some padding */
+    }
+
+    .carousel-item h2 {
+        font-size: 2.5em; /* Large font size for the title */
+        margin-bottom: 0.5em; /* Space below the title */
+    }
+
+    .carousel-item p {
+        font-size: 1.2em; /* Font size for the subtitle */
+    }
+
+    /* Style for the navigation buttons */
+    .carousel-control-prev, .carousel-control-next {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: #808080; /* Grey background */
+        color: white; /* White text */
+        padding: 10px 20px;
+        cursor: pointer;
+        border: none;
+    }
+
+    
+
+    .carousel-control-prev {
+        left: 15px;
+    }
+
+    .carousel-control-next {
+        right: 15px;
+    }
+
+    .carousel-control-prev:hover, .carousel-control-next:hover {
+        background-color: #a9a9a9; /* Darker grey on hover */
+    }
+
+    /* Show the first carousel item by default */
+    .carousel-item:first-child {
+        display: block;
+    }
+
+    .footer {
+        background-color: #ffce1f; /* Yellow background for the footer */
+        padding: 20px 0; /* Padding for the footer */
+    }
+
+    .footer-text, .footer-link {
+        text-align: center;
+        color: #808080; /* Styling text color */
+        margin-top: 10px; /* Spacing above footer text */
+    }
+
+    .footer-link {
+        text-decoration: none; /* Remove underline from links */
+        margin: 0 10px; /* Spacing around links */
+    }
+
+    .additional-content {
+        background-color: #ffffff; /* White background for content below the carousel */
+        padding: 30px; /* Padding around the additional content */
+        margin-top: -20px; /* Pull the content up to overlap with the carousel */
+    }
+    </style>
+       
+</head>
+<!-- Adding background color to the body -->
+<body>
+
+    <!-- Carousel Section -->
+    <div class="carousel" style="position: relative; max-width: 100%; margin: auto; overflow: hidden; background-color: #ffce1f;">
+
+        <!-- Carousel Item 1 -->
+        <div class="carousel-item active">
+            <h2 style="font-size: 2.5em; margin-bottom: 0.5em;">Balanced Bites: A Visual Digest of US Dietary Data</h2>
+            <!-- Include Image -->
+            <br>
+            <br>
+            <br>
+            <br>
+            <div style="display: flex; justify-content: center;">
+                <img src="images/honey.jpg" alt="Food" style="width: 30%; height: 50%;">
+            </div>
+            <p style="font-size: 1.5em; margin-top: 20;">Elevate Your Well-being with Every Bite. Take control of your health by understanding the impact of your food choices—because what you consume, and how much, shapes your tomorrow.</p>
+        </div>
+    
+        <!-- Carousel Item 2 -->
+        <div class="carousel-item" >
+            <h2 style="font-size: 2.5em; margin-bottom: 0.5em;">OBJECTIVE</h2>
+            <p style="font-size: 1.5em; margin-top: 0;">
+                Our study shows the nutritional components of various food groups. 
+                These charts represents a different nutrient (sugar, protein, fat, calories and carbohydrates) in terms of their content measured in grams.
+                <br>
+                <br>
+
+                The visualizations aim to provide insights into the nutritional makeup of foods commonly consumed within the U.S. demographic, helping viewers to understand and compare the relative quantities of these nutrients across different food categories. Through these we aim to encourage mindful eating by highlighting the nutritional profiles of different foods.
+            </p>
+        </div>
+    
+        <!-- Carousel Item 3 -->
+        <div class="carousel-item" >
+            <h2 style="font-size: 2.5em; margin-bottom: 0.5em;">Concerning Because...</h2>
+            <p style="font-size: 1.5em; margin-top: 0;">
+                In 2017, 11 million deaths and 255 million DALYs were attributable to dietary risk factors. 
+                High intake of sodium, low intake of whole grains , and low intake of fruits were the leading dietary risk factors for deaths and DALYs globally and in many countries.
+                <br>
+                <br>
+                <!-- add paraphrase -->
+                <italic>Source: The Lancet</italic>
+
+                <br>
+                <br>
+
+                This tool sheds light on dietary composition, aiding in meal planning and nutritional education
+                so users can make informed decisions about their diet to reduce the risk of chronic diseases.
+
+            </p>
+            <!-- Add button to article -->
+            <div class="button">
+                <a href="https://www.thelancet.com/article/S0140-6736(19)30041-8/fulltext" target="_blank">Read More</a>
+            </div>
+        </div>
+    
+        <!-- Carousel Navigation -->
+        <div class="carousel-control-prev">&lt;</div>
+        <div class="carousel-control-next">&gt;</div>
+    
+    </div>
+    
+    
+<!-- STARTING THE MAIN PLOT -->
+<!-- Align heading in the centre -->
+
+<h1 style="text-align: center;">Nutritional Content of Food Categories</h1>
+    <p>The plot below shows a prominent presence of carbohydrates in many 
+        food categories, with several categories displaying particularly 
+        high carbohydrate content. By examining the nutrient content of these categories, 
+        one can infer potential health implications. 
+        <br>
+        <br>
+        For example, high sugar and fat contents (Sweets and Candies) in certain categories 
+        could be flagged for their role in metabolic diseases if 
+        consumed in excess.</p>
+        <br>
+        <br>
+    <div id="controls"></div>
+<svg id="foodChart"></svg>
+<div class="tooltip" style="position: absolute; opacity: 0;"></div> <!-- Ensure tooltip has a position for absolute layout -->
+<script src="https://d3js.org/d3.v6.min.js"></script>
+<script>
+    const width = 1500;
+    const height = 1200;
+    const margin = {top: 60, right: 60, bottom: 200, left: 60};
+
+    const svg = d3.select("#foodChart")
+        .attr("width", width)
+        .attr("height", height);
+
+    // Move the controls selection before its first use
+    const controls = d3.select("#controls");
+
+    // Mapping from nutrients to image URLs
+    const nutrientImageMap = {
+        'Protein': './images/protein.jpg',
+        'Sugar': './images/sugar.jpg',
+        'Fat': './images/fat.jpg',
+        'Carbohydrates': './images/carbs.jpg',
+        // Add more mappings as needed
+    };
+
+    d3.csv('./data/average_nutrients.csv').then(function(data) {
+        const categories = [...new Set(data.map(d => d.Category))];
+        categories.forEach(category => {
+            const categoryId = category.replace(/\s+/g, '_');
+        });
+
+        // Scale down the images to avoid overlap
+        const imageWidth = 90; // Width of the images in pixels
+        const imageHeight = 90; // Height of the images in pixels
+
+        // Adjust the yScale to add some padding on top for better visibility
+        const yScale = d3.scaleLinear()
+            .domain([0, d3.max(data, d => parseFloat(d.Energ_Kcal))])
+            .range([height - margin.bottom, margin.top + 20]);
+
+        // Use scaleBand for categorical data on the x-axis
+        const xScale = d3.scaleBand()
+            .domain(categories) // Use category names as domain
+            .range([margin.left, width - margin.right])
+            .padding(0.1); // Add some padding between bands
+
+        
+        // Append images for each data point
+        svg.selectAll("image")
+            .data(data)
+            .enter()
+            .append("image")
+            .attr("width", imageWidth)
+            .attr("height", imageHeight)
+            .attr("xlink:href", function(d) {
+                let nutrients = [
+                    {type: 'Protein', value: parseFloat(d['Protein_(g)'])},
+                    {type: 'Sugar', value: parseFloat(d['Sugar_Tot_(g)'])},
+                    {type: 'Fat', value: parseFloat(d['Lipid_Tot_(g)'])},
+                    {type: 'Carbohydrates', value: parseFloat(d['Carbohydrt_(g)'])},
+                    
+                ];
+                let dominantNutrient = nutrients.sort((a, b) => b.value - a.value)[0].type;
+                return nutrientImageMap[dominantNutrient];
+            })
+            .attr("x", d => xScale(d.Category))
+            .attr("y", d => yScale(parseFloat(d.Energ_Kcal)) - imageHeight) // Adjust y position
+
+        // Add X Axis
+        svg.append("g")
+            .attr("transform", `translate(0,${height - margin.bottom})`)
+            .call(d3.axisBottom(xScale))
+            .selectAll("text")
+            .style("text-anchor", "end")
+            .attr("dx", "-.8em")
+            .attr("dy", ".15em")
+            .attr("transform", "rotate(-65)"); // Keep rotation
+        
+        // Add Y Axis
+        svg.append("g")
+            .attr("transform", `translate(${margin.left},0)`)
+            .call(d3.axisLeft(yScale))
+            .append("text")
+            .attr("fill", "#000")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 6)
+            .attr("dy", "-3.5em")
+            .attr("text-anchor", "end")
+            .text("Energy (kcal)");
+
+        // Ensure tooltip is only appended once
+        const tooltip = d3.select(".tooltip");
+
+        svg.selectAll("image")
+            .on("mouseover", (event, d) => {
+                tooltip.transition()
+                    .duration(200)
+                    .style("opacity", .9);
+                tooltip.html(getTooltipHtml(d)) // Function to create tooltip HTML content
+                    .style("left", (event.pageX) + "px")
+                    .style("top", (event.pageY - 28) + "px");
+            })
+            .on("mouseout", (event, d) => {
+                tooltip.transition()
+                    .duration(500)
+                    .style("opacity", 0);
+            });
+
+            svg.append("g")
+                .attr("class", "grid")
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.axisBottom(xScale)
+                    .tickSize(-height)
+                    .tickFormat("")
+                );
+
+            svg.selectAll(".grid line")
+                .style("stroke", "lightgrey")
+                .style("stroke-opacity", "0.7")
+                .style("shape-rendering", "crispEdges");
+            
+
+
+                    // If using bars, you can add a color scale
+        const colorScale = d3.scaleOrdinal(d3.schemeCategory10); // or any other color scheme
+
+// Then apply this scale to your bars or category labels
+svg.selectAll(".bar")
+    .style("fill", (d, i) => colorScale(i));
+
+
+// Add title and axis labels
+svg.selectAll("text")
+    .style("font-family", "Arial, sans-serif")
+    .style("font-size", "12px");
+
+svg.append("text")
+    .attr("x", (width / 2))             
+    .attr("y", margin.top / 2)
+    .attr("text-anchor", "middle")  
+    .style("font-size", "24px")
+    .style("font-weight", "bold")
+    .style("font-family", "Arial, sans-serif")
+    .text("");
+
+
+
+const legend = svg.append("g")
+    .attr("font-family", "Arial, sans-serif")
+    .attr("font-size", 10)
+    .attr("text-anchor", "end")
+    .selectAll("g")
+    .data(colorScale.domain().slice().reverse())
+    .enter().append("g")
+    .attr("transform", (d, i) => "translate(0," + i * 20 + ")");
+
+legend.append("rect")
+.attr("x", width - 19)
+.attr("width", 19)
+.attr("height", 19)
+.attr("fill", colorScale);
+
+legend.append("text")
+.attr("x", width - 24)
+.attr("y", 9.5)
+.attr("dy", "0.32em")
+.text(d => d);
+
+
+        // Function to update visibility based on checkboxes
+        function updateVisibility() {
+            const checkedCategories = categories.filter(category => 
+                d3.select("#" + category.replace(/\s+/g, '_')).property("checked")
+            );
+            svg.selectAll("image")
+                .style("display", d => checkedCategories.includes(d.Category) ? "inline" : "none");
+        }
+
+        // Function to create tooltip HTML content
+        function getTooltipHtml(d) {
+    return `
+        <div style="color: #fff; background: rgba(0, 0, 0, 0.75); padding: 10px; border-radius: 8px; font-family: ComicSansMS, sans-serif;">
+            <strong>${d.Category}</strong><br>
+            <table style="margin-top: 5px;">
+                <tr><td>Protein:</td><td>${d['Protein_(g)']}g</td></tr>
+                <tr><td>Sugar:</td><td>${d['Sugar_Tot_(g)']}g</td></tr>
+                <tr><td>Fat:</td><td>${d['Lipid_Tot_(g)']}g</td></tr>
+                <tr><td>Carbohydrates:</td><td>${d['Carbohydrt_(g)']}g</td></tr>
+                <tr><td>Energy:</td><td>${d.Energ_Kcal}kcal</td></tr>
+            </table>
+        </div>
+    `;
+}
+
+    });
+</script>
+
+<!-- Going to add a line break -->
+
+<br>
+<br>
+
+<p style="background-color: #ffce1f;"> The bar chart is grouped by nutrient type including sugar, protein, fat, and carbohydrates. 
+    This provides a visual comparison of the nutrient content across different food categories, 
+    allowing viewers to identify categories with particularly high or low nutrient content. 
+    This information can be used to make informed dietary choices and to understand the nutritional 
+    profile of different food categories. </p>
+
+
+<div id="myDiv">
+
+    <!-- Adding a paragraph with bullet points -->
+    <!-- Plotly chart will be drawn inside this DIV -->
+    <script>
+        // Load the CSV file
+        d3.csv('./data/average_nutrients.csv').then(function(data) {
+            var categories = data.map(function(d) { return d.Category; });
+            var sugarContent = data.map(function(d) { return +d['Sugar_Tot_(g)']; });
+            var proteinContent = data.map(function(d) { return +d['Protein_(g)']; });
+            var fatContent = data.map(function(d) { return +d['Lipid_Tot_(g)']; });
+            var carbContent = data.map(function(d) { return +d['Carbohydrt_(g)']; });
+    
+            var trace1 = {
+                x: categories,
+                y: sugarContent,
+                type: 'bar',
+                name: 'Sugar (g)',
+                marker: {
+                    color: 'rgba(255,99,132,0.6)',
+                    line: {
+                        color: 'rgba(255,99,132,1.0)',
+                        width: 1
+                    }
+                }
+            };
+    
+            var trace2 = {
+                x: categories,
+                y: proteinContent,
+                type: 'bar',
+                name: 'Protein (g)',
+                marker: {
+                    color: 'rgba(54, 162, 235, 0.6)',
+                    line: {
+                        color: 'rgba(54, 162, 235, 1.0)',
+                        width: 1
+                    }
+                }
+            };
+    
+            var trace3 = {
+                x: categories,
+                y: fatContent,
+                type: 'bar',
+                name: 'Fat (g)',
+                marker: {
+                    color: 'rgba(255, 206, 86, 0.6)',
+                    line: {
+                        color: 'rgba(255, 206, 86, 1.0)',
+                        width: 1
+                    }
+                }
+            };
+    
+            var trace4 = {
+                x: categories,
+                y: carbContent,
+                type: 'bar',
+                name: 'Carbohydrates (g)',
+                marker: {
+                    color: 'rgba(75, 192, 192, 0.6)',
+                    line: {
+                        color: 'rgba(75, 192, 192, 1.0)',
+                        width: 1
+                    }
+                }
+            };
+    
+    
+            var data = [trace1, trace2, trace3, trace4];
+    
+            var layout = {
+                title: 'Nutrient Content by Food Category',
+                xaxis: {
+                    title: 'Food Category',
+                    tickangle: -45
+                },
+                yaxis: {
+                    title: 'Amount',
+                    zeroline: false
+                },
+                barmode: 'group',
+                margin: {
+                    l: 100,
+                    r: 100,
+                    t: 100,
+                    b: 150
+                },
+                paper_bgcolor: 'rgb(248,248,255)',
+                plot_bgcolor: 'rgb(248,248,255)'
+            };
+    
+            Plotly.newPlot('myDiv', data, layout);
+        });
+    </script>
+    
+</div>
+
+<br>
+<br>
+
+<p style="background-color: #ffce1f;"> The bubble plot shows protein to carbohydrate 
+    content across catego. This is important for managing energy 
+    levels and body composition. A higher protein to carbohydrate 
+    ratio can be beneficial for muscle building and fat loss, as 
+    protein can help maintain muscle mass while potentially 
+    reducing hunger levels.
+
+</p>
+
+
+<br>
+<!-- Adding a line break -->
+<br>
+<div id="bubble-plot">
+
+    <script>
+        Plotly.d3.csv('./data/top_10_protein.csv', function(err, rows){
+            // Ensure no errors occurred during loading the data
+            if(err) throw err;
+    
+            // Group data by category
+            let categoryData = {};
+            rows.forEach(row => {
+                if (!categoryData[row.Category]) {
+                    categoryData[row.Category] = [];
+                }
+                categoryData[row.Category].push(row);
+            });
+    
+            // Generate a trace for each category
+            let traces = Object.keys(categoryData).map(category => {
+                let items = categoryData[category];
+                return {
+                    name: category,
+                    x: items.map(item => parseFloat(item['Carbohydrt_(g)'])), // Carbohydrate content
+                    y: items.map(item => parseFloat(item['Protein_(g)'])), // Protein content
+                    text: items.map(item => item['Shrt_Desc']), // Text displayed when hovering over a bubble
+                    mode: 'markers',
+                    marker: {
+                        size: items.map(item => parseFloat(item['Protein_(g)'])), // Size of the bubbles
+                        sizemode: 'diameter', // 'area' or 'diameter'
+                        sizeref: 2.0 * Math.max(...items.map(item => parseFloat(item['Protein_(g)']))) / (10**2), // Adjust '30' to scale bubble sizes
+                        opacity: 0.6
+                    }
+                };
+            });
+    
+            let layout = {
+                title: 'Protein to Carbohydrate Content in Food Items',
+                xaxis: {title: 'Carbohydrates (g)'},
+                yaxis: {title: 'Protein (g)'},
+                margin: {t: 40},
+                hovermode: 'closest',
+                showlegend: true
+            };
+    
+            Plotly.newPlot('bubble-plot', traces, layout);
+        });
+    </script>
+</div>
+
+<br>
+<br>
+
+<p style="background-color: #ffce1f;"> The bubble plot shows protein to fat content across different categories. 
+    This ratio can affect heart health and overall calorie intake. Protein-rich, lower-fat foods may be beneficial for weight management and cardiovascular health.
+
+
+</p>
+
+<br>
+<br>
+
+
+<!-- Adding Protin to Fat -->
+
+<div id="bubble-fat">
+
+    <script>
+        Plotly.d3.csv('./data/top_10_protein.csv', function(err, rows){
+            // Ensure no errors occurred during loading the data
+            if(err) throw err;
+    
+            // Group data by category
+            let categoryData = {};
+            rows.forEach(row => {
+                if (!categoryData[row.Category]) {
+                    categoryData[row.Category] = [];
+                }
+                categoryData[row.Category].push(row);
+            });
+    
+            // Generate a trace for each category
+            let traces = Object.keys(categoryData).map(category => {
+                let items = categoryData[category];
+                return {
+                    name: category,
+                    x: items.map(item => parseFloat(item['Lipid_Tot_(g)'])), // Fat content
+                    y: items.map(item => parseFloat(item['Protein_(g)'])), // Protein content
+                    text: items.map(item => item['Shrt_Desc']), // Text displayed when hovering over a bubble
+                    mode: 'markers',
+                    marker: {
+                        size: items.map(item => parseFloat(item['Protein_(g)'])), // Size of the bubbles
+                        sizemode: 'diameter', // 'area' or 'diameter'
+                        sizeref: 2.0 * Math.max(...items.map(item => parseFloat(item['Protein_(g)']))) / (10**2), // Adjust '30' to scale bubble sizes
+                        opacity: 0.6
+                    }
+                };
+            });
+    
+            let layout = {
+                title: 'Protein to Fat Content in Food Items',
+                xaxis: {title: 'Fat (g)'},
+                yaxis: {title: 'Protein (g)'},
+                margin: {t: 40},
+                hovermode: 'closest',
+                showlegend: true
+            };
+    
+            Plotly.newPlot('bubble-fat', traces, layout);
+        });
+    </script>
+</div>
+<!-- Adding a line break -->
+<br>
+<br>
+
+<p style="background-color: #ffce1f;"> 
+    For individuals who plan their meals, this visualization can quickly highlight which categories are most significant contributors to certain nutritional elements. For example, if a category shows a high contribution to the "Energy_Kcal" metric, it might be consumed in moderation by those watching their caloric intake.
+
+    <article style="background-color: #ffce1f;">
+        <h2>Examples</h2>
+        <ul>
+            <li>For example, a high cumulative sugar intake across categories may correlate with increased risks for metabolic disorders.</li>
+            <li>High protien, low fat aids in muscle maintennace, weight management to make conscious choices with their diet.</li>
+        </ul>
+</p>
+
+<div id="collate">
+    <script>
+        d3.csv('./data/top_10_protein.csv').then(function(data) {
+            // Assume data is aggregated by category with averages for each nutrient
+            var categoryData = aggregateDataByCategory(data); // Pseudocode
+    
+            var traces = [];
+            var nutritionalMetrics = ['Protein_(g)', 'Sugar_Tot_(g)', 'Lipid_Tot_(g)', 'Carbohydrt_(g)'];
+            var categories = Object.keys(categoryData); // Your categories
+    
+            categories.forEach(function(category, index) {
+                var yValues = nutritionalMetrics.map(metric => categoryData[category][metric]);
+                var xValues = nutritionalMetrics; // Using metrics as the x-axis
+    
+                var trace = {
+                    x: xValues,
+                    y: yValues,
+                    fill: 'tozeroy',
+                    type: 'scatter',
+                    mode: 'none', // No markers or lines, just the filled area
+                    name: category
+                };
+                traces.push(trace);
+            });
+    
+            var layout = {
+                title: 'Nutritional Profile by Category',
+                xaxis: { title: 'Nutritional Metric' },
+                yaxis: { title: 'Value' },
+                showlegend: true
+            };
+    
+            Plotly.newPlot('collate', traces, layout);
+        });
+    
+        // Pseudocode: Implement this function based on your data structure
+        function aggregateDataByCategory(data) {
+    let categoryAggregates = {};
+
+    // Loop through each data item
+    data.forEach(item => {
+        let category = item.Category;
+
+        // Initialize category in the aggregate object if not present
+        if (!categoryAggregates[category]) {
+            categoryAggregates[category] = {
+                'Protein_(g)': [],
+                'Sugar_Tot_(g)': [],
+                'Lipid_Tot_(g)': [],
+                'Carbohydrt_(g)': [],
+                'count': 0 // Count the number of items for averaging later
+            };
+        }
+
+        // Accumulate values for each metric
+        categoryAggregates[category]['Protein_(g)'].push(parseFloat(item['Protein_(g)'] || 0));
+        categoryAggregates[category]['Sugar_Tot_(g)'].push(parseFloat(item['Sugar_Tot_(g)'] || 0));
+        categoryAggregates[category]['Lipid_Tot_(g)'].push(parseFloat(item['Lipid_Tot_(g)'] || 0));
+        categoryAggregates[category]['Carbohydrt_(g)'].push(parseFloat(item['Carbohydrt_(g)'] || 0));
+        categoryAggregates[category]['count'] += 1;
+    });
+
+    // Calculate averages
+    Object.keys(categoryAggregates).forEach(category => {
+        Object.keys(categoryAggregates[category]).forEach(metric => {
+            if (metric !== 'count') {
+                let total = categoryAggregates[category][metric].reduce((acc, curr) => acc + curr, 0);
+                let avg = total / categoryAggregates[category]['count'];
+                categoryAggregates[category][metric] = avg; // Replace the array with its average
+            }
+        });
+        delete categoryAggregates[category]['count']; // Remove the count property
+    });
+
+    return categoryAggregates;
+}
+
+    </script>
+    
+</div>
+
+<!-- Sugar-Sweetened Beverage Consumption Visualization Section -->
+<h1>Daily consumption of sweetened beverages: A comparative overview by category</h1>
+<section>
+    <h2>Short Description</h2>
+    <p><strong>WHAT the Visualizations Show:</strong> The visualization provides a comparative analysis of the average daily consumption of sugar-sweetened beverages among various demographic groups. These groups are chosen to reflect diverse characteristics, allowing individuals to see the consumption patterns of people similar to them.</p>
+    <!-- Include the rest of the description here -->
+</section>
+
+<div id="beverageConsumptionVisualization"></div>
+
+<!-- Dropdowns for selecting data categories -->
+<select id="beverageRow1"></select>
+<select id="beverageRow2"></select>
+<select id="beverageRow3"></select>
+<select id="beverageRow4"></select>
+<select id="beverageRow5"></select>
+
+<script>
+    // Define dataset paths
+    const beverageDatasets = {
+        "AgeGroup": "./data/BCAgeGroup.csv",
+        "Gender": "./data/BCgender.csv",
+        "Age": "./data/BCage.csv",
+        "Income": "./data/BCIncome.csv",
+        "Ethnicity": "./data/BCethnicity.csv"
+    };
+
+    let beverageValues = []; // To store current 'y' values for the chart
+
+    // Function to load a dataset and populate its corresponding dropdown
+    function loadBeverageDataset(category, path, index) {
+        return d3.csv(path).then(data => {
+            const dropdown = document.getElementById(`beverageRow${index + 1}`);
+            data.forEach((row, rowIndex) => {
+                const option = document.createElement("option");
+                option.value = rowIndex;
+                option.text = row.Type; // Assuming 'Type' is a column in your CSV
+                dropdown.appendChild(option);
+            });
+
+            beverageValues.push(parseFloat(data[0].DailyBeverage)); // Assuming 'DailyBeverage' is a column in your CSV
+
+            if (beverageValues.length === Object.keys(beverageDatasets).length) {
+                drawBeverageChart();
+            }
+        });
+    }
+
+    Object.entries(beverageDatasets).forEach(([category, path], index) => {
+        loadBeverageDataset(category, path, index);
+    });
+
+    function drawBeverageChart() {
+        const data = {
+            x: Object.keys(beverageDatasets),
+            y: beverageValues,
+            type: 'bar',
+            marker: {
+                color: ['red', 'blue', 'green', 'yellow', 'purple'] // Example colors
+            }
+        };
+
+        const layout = {
+            title: 'People like you with the same:',
+            xaxis: { title: 'Category' },
+            yaxis: { title: 'Daily Beverage Consumption' }
+        };
+
+        Plotly.newPlot('beverageConsumptionVisualization', [data], layout);
+    }
+
+    function updateBeverageBar(index, value) {
+        beverageValues[index] = value;
+        Plotly.restyle('beverageConsumptionVisualization', 'y', [beverageValues]);
+    }
+
+    Object.keys(beverageDatasets).forEach((category, index) => {
+        document.getElementById(`beverageRow${index + 1}`).addEventListener('change', function() {
+            const selectedRow = this.value;
+            d3.csv(beverageDatasets[category]).then(data => {
+                updateBeverageBar(index, parseFloat(data[selectedRow].DailyBeverage));
+            });
+        });
+    });
+</script>
+
+<br>
+<br>
+<br>
+
+   <!-- Footer -->
+   <footer>
+    <p>A project by Ragi and Gabriel. Team:EatRight </p>
+    <!-- copyright -->
+    <p>&copy; 2024</p>
+</footer>
+
+<script src="script.js"></script>
+<!-- Script to navigate through the Carousel -->
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+let currentCarouselItemIndex = 0;
+const carouselItems = document.querySelectorAll('.carousel-item');
+const totalCarouselItems = carouselItems.length;
+
+function showCarouselItem(index) {
+    // Hide all carousel items
+    carouselItems.forEach(item => {
+        item.style.display = 'none';
+    });
+    // Show the current item
+    carouselItems[index].style.display = 'block';
+}
+
+// Initial call to display the first carousel item
+showCarouselItem(currentCarouselItemIndex);
+
+// Attach event listeners to arrows
+document.querySelector('.carousel-control-next').addEventListener('click', () => {
+    currentCarouselItemIndex = (currentCarouselItemIndex + 1) % totalCarouselItems;
+    showCarouselItem(currentCarouselItemIndex);
+});
+
+document.querySelector('.carousel-control-prev').addEventListener('click', () => {
+    currentCarouselItemIndex = (currentCarouselItemIndex - 1 + totalCarouselItems) % totalCarouselItems;
+    showCarouselItem(currentCarouselItemIndex);
+});
+});
+
+</script>
+
+
+
+</body>
+</html>
+
